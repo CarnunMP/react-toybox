@@ -1,11 +1,13 @@
 import React from 'react';
 
-import HilbertCurve from './toybox/hilbert-curves/HilbertCurve';
+import HilbertCurve from './toybox/HilbertCurve';
+import TicTacToe from './toybox/TicTacToe';
 
 export default function App() {
   return (
     <div className="App">
-      <HilbertCurve iterations={1} />
+      {/* <HilbertCurve iterations={2} /> */}
+      <TicTacToe />
     </div>
   );
 }
