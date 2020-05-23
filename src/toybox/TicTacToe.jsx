@@ -37,7 +37,7 @@ const StyledGrid = styled.div`
   }
 `;
 
-const StyledStartButton = styled.button`
+const StyledButton = styled.button`
   width: 80px;
   height: 35px;
   margin: 1rem auto;
@@ -71,8 +71,14 @@ export default function TicTacToe(props) {
 
     setPlayerIsMoving(!playerIsMoving);
     setGrid(modifiedGrid);
-    console.log(grid);
+    // console.log(grid);
   };
+
+  const resetGame = () => {
+    setGrid(newGrid);
+    setPlayerIsX(true); // TODO: randomise start of game
+    setPlayerIsMoving(playerIsX);
+  }
 
   // const startNewGame = () => {
   //   // flip coin to determine who starts, player or computer
@@ -92,9 +98,9 @@ export default function TicTacToe(props) {
       </div>
     ))}
     </StyledGrid>
-    {/* <StyledStartButton onClick={startNewGame}>
-      Start
-    </StyledStartButton> */}
+    <StyledButton id='reset' onClick={resetGame}>
+      Reset
+    </StyledButton>
     </>
   )
 }
