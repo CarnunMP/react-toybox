@@ -28,10 +28,17 @@ const StyledGrid = styled.div`
       justify-content: center;
       align-items: center;
 
+      cursor: pointer;
+
       p {
         width: 1rem;
         height: 1rem;
         color: white;
+
+        ::selection {
+          color: none;
+          background: none;
+        }
       }
     }
   }
@@ -47,6 +54,8 @@ const StyledButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  cursor: pointer;
 `;
 
 export default function TicTacToe(props) {
@@ -62,16 +71,18 @@ export default function TicTacToe(props) {
   const makeMove = (row, col) => {
     const modifiedGrid = grid;
 
-    if (playerIsMoving) {
-      modifiedGrid[row][col] = playerIsX ? 1 : 0;
-    } else {
-      // AI move
-      modifiedGrid[row][col] = playerIsX ? 0 : 1;
+    if (grid[row][col] === null) { // if square is unoccupied
+      if (playerIsMoving) {
+        modifiedGrid[row][col] = playerIsX ? 1 : 0;
+      } else {
+        // AI move
+        modifiedGrid[row][col] = playerIsX ? 0 : 1;
+      }
+      
+      setPlayerIsMoving(!playerIsMoving);
+      setGrid(modifiedGrid);
+      // console.log(grid);
     }
-
-    setPlayerIsMoving(!playerIsMoving);
-    setGrid(modifiedGrid);
-    // console.log(grid);
   };
 
   const resetGame = () => {
