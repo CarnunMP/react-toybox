@@ -58,38 +58,67 @@ const StyledButton = styled.button`
   cursor: pointer;
 `;
 
+const StyledMessage = styled.p`
+  text-align: center;
+`;
+
 export default function TicTacToe(props) {
   // instantiate grid
-  const newGrid = [[null, null, null],
-                   [null, null, null],
-                   [null, null, null]];
+  const newGrid = [[0, 0, 0],
+                   [0, 0, 0],
+                   [0, 0, 0]];
 
   const [grid, setGrid] = useState(newGrid);
   const [playerIsX, setPlayerIsX] = useState(true);
   const [playerIsMoving, setPlayerIsMoving] = useState(playerIsX); // TODO: randomise start of game
+  const [winner, setWinner] = useState(null);
   
+  const resetGame = () => {
+    setGrid(newGrid);
+    setPlayerIsX(true); // TODO: randomise start of game
+    setPlayerIsMoving(playerIsX);
+  };
+
+  const checkForWin = () => {
+    const runs = { r0: 0, r1: 0, r2: 0, // rows 0 -> 2
+                   c0: 0, c1: 0, c2: 0, // cols 0 -> 2
+                   d0: 0, d1: 0 }       // diags, major and minor
+
+    // loop over the grid, adding grid values to appropriate counters
+    grid.forEach((row, i) => {
+      row.forEach((col, j) => {
+        const value = grid[i][j];
+
+        runs[`r${i}`] += value;
+        runs[`c${j}`] += value;
+
+        if (i === j) { runs.d0 += value; } 
+        if (i + j === 2) { runs.d1 += value;}
+      });
+    });
+
+    // check for winning counter values
+    return Object.values(runs).includes(3) ? 'X' : Object.values(runs).includes(-3) ? 'O' : null;
+  };
+
   const makeMove = (row, col) => {
     const modifiedGrid = grid;
 
-    if (grid[row][col] === null) { // if square is unoccupied
+    if (grid[row][col] === 0) { // if square is unoccupied
       if (playerIsMoving) {
-        modifiedGrid[row][col] = playerIsX ? 1 : 0;
+        modifiedGrid[row][col] = playerIsX ? 1 : -1;
       } else {
         // AI move
-        modifiedGrid[row][col] = playerIsX ? 0 : 1;
+        modifiedGrid[row][col] = playerIsX ? -1 : 1;
       }
       
       setPlayerIsMoving(!playerIsMoving);
       setGrid(modifiedGrid);
       // console.log(grid);
+
+      setWinner(checkForWin());
     }
   };
-
-  const resetGame = () => {
-    setGrid(newGrid);
-    setPlayerIsX(true); // TODO: randomise start of game
-    setPlayerIsMoving(playerIsX);
-  }
 
   // const startNewGame = () => {
   //   // flip coin to determine who starts, player or computer
@@ -98,20 +127,21 @@ export default function TicTacToe(props) {
 
   return (
     <>
-    <StyledGrid>
-    {grid.map((row, i) => (
-      <div className='row' key={i}>
-        {row.map((col, j) => (
-          <div className='square' key={j} onClick={() => makeMove(i, j)}>
-            {col === 1 ? <p>X</p> : col === 0 ? <p>O</p> : null}
-          </div>
-        ))}
-      </div>
-    ))}
-    </StyledGrid>
-    <StyledButton id='reset' onClick={resetGame}>
-      Reset
-    </StyledButton>
+      <StyledGrid>
+      {grid.map((row, i) => (
+        <div className='row' key={i}>
+          {row.map((col, j) => (
+            <div className='square' key={j} onClick={() => makeMove(i, j)}>
+              {col === 1 ? <p>X</p> : col === -1 ? <p>O</p> : null}
+            </div>
+          ))}
+        </div>
+      ))}
+      </StyledGrid>
+      <StyledButton id='reset' onClick={resetGame}>
+        Reset
+      </StyledButton>
+      {winner && <StyledMessage>{winner} wins!</StyledMessage>}
     </>
   )
 }
