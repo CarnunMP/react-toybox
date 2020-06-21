@@ -44,18 +44,24 @@ const StyledGrid = styled.div`
   }
 `;
 
-const StyledButton = styled.button`
-  width: 80px;
-  height: 35px;
-  margin: 1rem auto;
-  background: black;
-  color: white;
-  
+const StyledButtons = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
 
-  cursor: pointer;
+  button {
+    width: 80px;
+    height: 35px;
+    margin: 0 0.5rem;
+    margin-bottom: 1rem;
+    background: black;
+    color: white;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    cursor: pointer;
+  }
 `;
 
 const StyledMessage = styled.p`
@@ -72,14 +78,16 @@ export default function TicTacToe(props) {
   const [playerIsX, setPlayerIsX] = useState(true);
   const [playerIsMoving, setPlayerIsMoving] = useState(playerIsX); // TODO: randomise start of game
   const [winner, setWinner] = useState(null);
+  const [mode, setMode] = useState('PvP');
   
   const resetGame = () => {
     setGrid(newGrid);
     setPlayerIsX(true); // TODO: randomise start of game
     setPlayerIsMoving(playerIsX);
+    setWinner(null);
   };
 
-  const checkForWin = () => {
+  const checkGrid = () => {
     const runs = { r0: 0, r1: 0, r2: 0, // rows 0 -> 2
                    c0: 0, c1: 0, c2: 0, // cols 0 -> 2
                    d0: 0, d1: 0 }       // diags, major and minor
@@ -96,6 +104,8 @@ export default function TicTacToe(props) {
         if (i + j === 2) { runs.d1 += value;}
       });
     });
+
+
 
     // check for winning counter values
     return Object.values(runs).includes(3) ? 'X' : Object.values(runs).includes(-3) ? 'O' : null;
@@ -116,14 +126,45 @@ export default function TicTacToe(props) {
       setGrid(modifiedGrid);
       // console.log(grid);
 
-      setWinner(checkForWin());
+      const gridCheck = checkGrid();
+      if (gridCheck === 'X' || gridCheck === 'O') {
+        setWinner(gridCheck);
+      }
     }
   };
 
-  // const startNewGame = () => {
-  //   // flip coin to determine who starts, player or computer
-  //   const playerStarts = Math.floor(Math.random() * 2) === 0;
-  // }
+  const computerMove = () => {
+    if (grid[1][1] === 0) { // if middle free, go there
+      return (1, 1);
+    } else if (needToBlock()) {
+      // block
+    } else if (cornerFree()) {
+      // pick one, go there
+    } else {
+      // pick random free spot
+    }
+
+    const needToBlock = () => {
+      // return true if 
+    };
+
+    const cornerFree = () => {
+
+    }
+  };
+
+  const switchMode = () => {
+    switch (mode) {
+      case 'PvP':
+        setMode('PvE');
+        break;
+      case 'PvE':
+        setMode('PvP');
+        break;
+      default:
+        break;
+    }
+  }
 
   return (
     <>
@@ -138,9 +179,10 @@ export default function TicTacToe(props) {
         </div>
       ))}
       </StyledGrid>
-      <StyledButton id='reset' onClick={resetGame}>
-        Reset
-      </StyledButton>
+      <StyledButtons>
+        <button id='switch-mode' onClick={switchMode}>{mode}</button>
+        <button id='reset' onClick={resetGame}>Reset</button>
+      </StyledButtons>
       {winner && <StyledMessage>{winner} wins!</StyledMessage>}
     </>
   )
